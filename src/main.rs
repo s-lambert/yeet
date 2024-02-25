@@ -19,7 +19,7 @@ struct CoverageReport {
 struct ServiceConfig {
     secret_phrase: String,
     turso_db_url: String,
-    turso_api_key: String,
+    turso_auth_token: String,
 }
 
 fn get_epoch_ms() -> u128 {
@@ -43,7 +43,7 @@ async fn update_coverage(
 
     let db = Database::open_remote(
         service_config.turso_db_url.clone(),
-        service_config.turso_api_key.clone(),
+        service_config.turso_auth_token.clone(),
     )
     .unwrap();
 
@@ -73,8 +73,8 @@ async fn main(#[shuttle_secrets::Secrets] secret_store: SecretStore) -> shuttle_
         turso_db_url: secret_store
             .get("TURSO_DB_URL")
             .expect("Environment variables not supplied"),
-        turso_api_key: secret_store
-            .get("TURSO_API_KEY")
+        turso_auth_token: secret_store
+            .get("TURSO_DB_AUTH_TOKEN")
             .expect("Environment variables not supplied"),
     };
 
