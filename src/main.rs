@@ -10,6 +10,7 @@ use shuttle_secrets::SecretStore;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 #[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
 struct CoverageReport {
     secret_phrase: String,
     statement_percent: f32,
@@ -45,11 +46,11 @@ async fn update_coverage(
         service_config.turso_db_url.clone(),
         service_config.turso_auth_token.clone(),
     )
-    .unwrap();
+    .expect("Did not open remote connection to database");
 
     let time = get_epoch_ms() as u64;
     let statement_percent = payload.statement_percent;
-    let conn = db.connect().unwrap();
+    let conn = db.connect().expect("Connection not established");
     let result = conn
         .execute(
             "INSERT INTO code_coverage VALUES (?1, ?2)",
